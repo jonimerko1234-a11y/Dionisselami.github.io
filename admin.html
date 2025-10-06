@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - S.R.S Ashensorë</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'srs-navy': '#0A192F',
+                        'srs-light-navy': '#112240',
+                        'srs-cyan': '#64FFDA',
+                        'srs-slate': '#8892B0',
+                        'srs-light-slate': '#CCD6F6',
+                        'srs-white': '#E6F1FF',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Montserrat', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-srs-navy min-h-screen">
+    <!-- Login Section -->
+    <div id="loginSection" class="min-h-screen flex items-center justify-center px-4">
+        <div class="bg-srs-light-navy rounded-lg shadow-2xl p-8 w-full max-w-md">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-srs-white mb-2">Admin Panel</h1>
+                <p class="text-srs-slate">S.R.S Ashensorë</p>
+            </div>
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label for="username" class="block text-srs-white mb-2">Username</label>
+                    <input type="text" id="username" required
+                        class="w-full px-4 py-3 rounded-md bg-srs-navy text-srs-white border border-srs-slate focus:border-srs-cyan focus:outline-none">
+                </div>
+                <div>
+                    <label for="password" class="block text-srs-white mb-2">Password</label>
+                    <input type="password" id="password" required
+                        class="w-full px-4 py-3 rounded-md bg-srs-navy text-srs-white border border-srs-slate focus:border-srs-cyan focus:outline-none">
+                </div>
+                <div id="errorMessage" class="text-red-400 text-sm hidden"></div>
+                <button type="submit"
+                    class="w-full bg-srs-cyan text-srs-navy py-3 rounded-md font-semibold hover:brightness-110 transition-all duration-300">
+                    Kyçu
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard Section -->
+    <div id="dashboardSection" class="hidden min-h-screen p-4 md:p-8">
+        <div class="max-w-7xl mx-auto">
+            <!-- Header -->
+            <div class="bg-srs-light-navy rounded-lg shadow-lg p-6 mb-6 flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-srs-white">Admin Dashboard</h1>
+                    <p class="text-srs-slate mt-1">Mirësevini në panelin administrativ</p>
+                </div>
+                <button id="logoutBtn"
+                    class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition-all duration-300">
+                    Dil
+                </button>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div class="bg-srs-light-navy rounded-lg shadow-lg p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-srs-slate text-sm">Kërkesa Totale</p>
+                            <p id="totalRequests" class="text-3xl font-bold text-srs-cyan">0</p>
+                        </div>
+                        <i data-feather="mail" class="text-srs-cyan w-12 h-12"></i>
+                    </div>
+                </div>
+                <div class="bg-srs-light-navy rounded-lg shadow-lg p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-srs-slate text-sm">Kërkesa Kuotash</p>
+                            <p id="quoteRequests" class="text-3xl font-bold text-srs-cyan">0</p>
+                        </div>
+                        <i data-feather="file-text" class="text-srs-cyan w-12 h-12"></i>
+                    </div>
+                </div>
+                <div class="bg-srs-light-navy rounded-lg shadow-lg p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-srs-slate text-sm">Kontakte</p>
+                            <p id="contactRequests" class="text-3xl font-bold text-srs-cyan">0</p>
+                        </div>
+                        <i data-feather="phone" class="text-srs-cyan w-12 h-12"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="bg-srs-light-navy rounded-lg shadow-lg mb-6">
+                <div class="flex border-b border-srs-navy">
+                    <button id="quoteTab" class="tab-btn active px-6 py-4 text-srs-white font-medium border-b-2 border-srs-cyan">
+                        Kërkesa për Kuotë
+                    </button>
+                    <button id="contactTab" class="tab-btn px-6 py-4 text-srs-slate font-medium hover:text-srs-white">
+                        Mesazhe Kontakti
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quote Requests Table -->
+            <div id="quoteContent" class="tab-content bg-srs-light-navy rounded-lg shadow-lg overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-srs-navy">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-srs-white font-semibold">ID</th>
+                                <th class="px-6 py-4 text-left text-srs-white font-semibold">Emri</th>
+                                <th class="px-6 py-4 text-left text-srs-white font-semibold">Email</th>
+                                <th class="px-6 py-4 text-left text-srs-white font-semibold">Telefoni</th>
+                                <th class="px-6 py-4 text-left text-srs-white font-semibold">Modeli</th>
+                                <th class="px-6 py-4 text-left text-srs-white font-semibold">Data</th>
+                                <th class="px-6 py-4 text-left text-srs-white font-semibold">Veprime</th>
+                            </tr>
+                        </thead>
+                        <tbody id="quoteTableBody" class="divide-y divide-srs-navy">
+                            <tr>
+                                <td colspan="7" class="px-6 py-8 text-center text-srs-slate">
+                                    Nuk ka kërkesa për kuotë
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Contact Messages Table -->
+            <div id="contactContent" class="tab-content hidden bg-srs-light-navy rounded-lg shadow-lg overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-srs-navy">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-srs-white font-semibold">ID</th>
+                                <th class="px-6 py-4 text-left text-srs-white font-semibold">Emri</th>
+                                <th class="px-6 py-4 text-left text-srs-white font-semibold">Email</th>
+                                <th class="px-6 py-4 text-left text-srs-white font-semibold">Telefoni</th>
+                                <th class="px-6 py-4 text-left text-srs-white font-semibold">Mesazhi</th>
+                                <th class="px-6 py-4 text-left text-srs-white font-semibold">Data</th>
+                                <th class="px-6 py-4 text-left text-srs-white font-semibold">Veprime</th>
+                            </tr>
+                        </thead>
+                        <tbody id="contactTableBody" class="divide-y divide-srs-navy">
+                            <tr>
+                                <td colspan="7" class="px-6 py-8 text-center text-srs-slate">
+                                    Nuk ka mesazhe kontakti
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="backend.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            feather.replace();
+
+            const loginSection = document.getElementById('loginSection');
+            const dashboardSection = document.getElementById('dashboardSection');
+            const loginForm = document.getElementById('loginForm');
+            const errorMessage = document.getElementById('errorMessage');
+            const logoutBtn = document.getElementById('logoutBtn');
+
+            // Check if already logged in
+            if (Backend.isLoggedIn()) {
+                showDashboard();
+            }
+
+            // Login form submission
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+
+                if (Backend.login(username, password)) {
+                    showDashboard();
+                } else {
+                    errorMessage.textContent = 'Username ose password i gabuar';
+                    errorMessage.classList.remove('hidden');
+                }
+            });
+
+            // Logout button
+            logoutBtn.addEventListener('click', function() {
+                Backend.logout();
+                location.reload();
+            });
+
+            // Tab switching
+            const quoteTab = document.getElementById('quoteTab');
+            const contactTab = document.getElementById('contactTab');
+            const quoteContent = document.getElementById('quoteContent');
+            const contactContent = document.getElementById('contactContent');
+
+            quoteTab.addEventListener('click', function() {
+                quoteTab.classList.add('active', 'border-srs-cyan', 'text-srs-white');
+                quoteTab.classList.remove('text-srs-slate');
+                contactTab.classList.remove('active', 'border-srs-cyan', 'text-srs-white');
+                contactTab.classList.add('text-srs-slate');
+                quoteContent.classList.remove('hidden');
+                contactContent.classList.add('hidden');
+            });
+
+            contactTab.addEventListener('click', function() {
+                contactTab.classList.add('active', 'border-srs-cyan', 'text-srs-white');
+                contactTab.classList.remove('text-srs-slate');
+                quoteTab.classList.remove('active', 'border-srs-cyan', 'text-srs-white');
+                quoteTab.classList.add('text-srs-slate');
+                contactContent.classList.remove('hidden');
+                quoteContent.classList.add('hidden');
+            });
+
+            function showDashboard() {
+                loginSection.classList.add('hidden');
+                dashboardSection.classList.remove('hidden');
+                loadDashboardData();
+                feather.replace();
+            }
+
+            function loadDashboardData() {
+                const quotes = Backend.getQuoteRequests();
+                const contacts = Backend.getContactMessages();
+
+                // Update stats
+                document.getElementById('totalRequests').textContent = quotes.length + contacts.length;
+                document.getElementById('quoteRequests').textContent = quotes.length;
+                document.getElementById('contactRequests').textContent = contacts.length;
+
+                // Load quote requests
+                const quoteTableBody = document.getElementById('quoteTableBody');
+                if (quotes.length === 0) {
+                    quoteTableBody.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="px-6 py-8 text-center text-srs-slate">
+                                Nuk ka kërkesa për kuotë
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    quoteTableBody.innerHTML = quotes.map((quote, index) => `
+                        <tr class="hover:bg-srs-navy transition-colors">
+                            <td class="px-6 py-4 text-srs-white">${index + 1}</td>
+                            <td class="px-6 py-4 text-srs-white">${quote.name}</td>
+                            <td class="px-6 py-4 text-srs-cyan">${quote.email}</td>
+                            <td class="px-6 py-4 text-srs-white">${quote.phone}</td>
+                            <td class="px-6 py-4 text-srs-white">${quote.model}</td>
+                            <td class="px-6 py-4 text-srs-slate">${new Date(quote.date).toLocaleDateString('sq-AL')}</td>
+                            <td class="px-6 py-4">
+                                <button onclick="deleteQuote('${quote.id}')" class="text-red-400 hover:text-red-300">
+                                    <i data-feather="trash-2" class="w-5 h-5"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                    feather.replace();
+                }
+
+                // Load contact messages
+                const contactTableBody = document.getElementById('contactTableBody');
+                if (contacts.length === 0) {
+                    contactTableBody.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="px-6 py-8 text-center text-srs-slate">
+                                Nuk ka mesazhe kontakti
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    contactTableBody.innerHTML = contacts.map((contact, index) => `
+                        <tr class="hover:bg-srs-navy transition-colors">
+                            <td class="px-6 py-4 text-srs-white">${index + 1}</td>
+                            <td class="px-6 py-4 text-srs-white">${contact.name}</td>
+                            <td class="px-6 py-4 text-srs-cyan">${contact.email}</td>
+                            <td class="px-6 py-4 text-srs-white">${contact.phone}</td>
+                            <td class="px-6 py-4 text-srs-slate max-w-xs truncate">${contact.message}</td>
+                            <td class="px-6 py-4 text-srs-slate">${new Date(contact.date).toLocaleDateString('sq-AL')}</td>
+                            <td class="px-6 py-4">
+                                <button onclick="deleteContact('${contact.id}')" class="text-red-400 hover:text-red-300">
+                                    <i data-feather="trash-2" class="w-5 h-5"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                    feather.replace();
+                }
+            }
+
+            // Global functions for delete buttons
+            window.deleteQuote = function(id) {
+                if (confirm('Jeni të sigurt që dëshironi të fshini këtë kërkesë?')) {
+                    Backend.deleteQuoteRequest(id);
+                    loadDashboardData();
+                }
+            };
+
+            window.deleteContact = function(id) {
+                if (confirm('Jeni të sigurt që dëshironi të fshini këtë mesazh?')) {
+                    Backend.deleteContactMessage(id);
+                    loadDashboardData();
+                }
+            };
+        });
+    </script>
+</body>
+</html>
